@@ -1,0 +1,3 @@
+/home/kozlovskiy-di/CLionProjects/tinyLogger/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/kozlovskiy-di/CLionProjects/tinyLogger/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/kozlovskiy-di/CLionProjects/tinyLogger/cmake-build-debug/CMakeFiles/tinyLogger.dir

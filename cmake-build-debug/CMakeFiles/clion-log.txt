@@ -1,0 +1,4 @@
+/home/kozlovskiy-di/Documents/clion-2021.3.4/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/kozlovskiy-di/Documents/clion-2021.3.4/bin/ninja/linux/ninja -G Ninja /home/kozlovskiy-di/CLionProjects/tinyLogger
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/kozlovskiy-di/CLionProjects/tinyLogger/cmake-build-debug
