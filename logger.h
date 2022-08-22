@@ -16,10 +16,14 @@ private:
     static std::string logFile;
     static std::string path;
     static void clearLogs();
-
+    static std::string pName;
+    static int maxSize;
+    static int maxFiles;
 public:
-
     static std::fstream f;
+
+    static void init(std::string &name, int maxLogSize = 50, int maxFilesCount = 10);
+
     static void log(const std::string& text, const std::string& color);
 
     static void warn(const std::string& text);

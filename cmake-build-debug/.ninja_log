@@ -1,3 +1,5 @@
 # ninja log v5
 0	759	1661156792859810205	CMakeFiles/tinyLogger.dir/logger.cpp.o	631a2aa2ca545f5b
 759	810	1661156792911809731	libtinyLogger.so	fc4fd7d9c2cf3b39
+0	612	1661157660031501974	CMakeFiles/tinyLogger.dir/logger.cpp.o	631a2aa2ca545f5b
+612	656	1661157660075501541	libtinyLogger.so	fc4fd7d9c2cf3b39

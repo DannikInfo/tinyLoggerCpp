@@ -2,7 +2,13 @@
 
 std::string logger::logFile;
 std::fstream logger::f;
-std::string logger::path = "/var/log/serviceState";
+std::string logger::path = "/var/log/"+pName;
+
+void logger::init(std::string &name, int maxLogSize, int maxFilesCount){
+    pName = name;
+    maxSize = maxLogSize;
+    maxFiles = maxFilesCount;
+}
 
 void logger::clearLogs(){
     DIR *dir;
@@ -22,7 +28,7 @@ void logger::clearLogs(){
     if ((dir = opendir(path.c_str())) != nullptr) {
         while ((ent = readdir(dir)) != nullptr) {
             if(!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) continue;
-            if(strstr(ent->d_name, ".log") && logsCount > 10){
+            if(strstr(ent->d_name, ".log") && logsCount > maxFiles){
                 std::string remFile = path;
                 remFile += "/";
                 remFile += ent->d_name;
@@ -46,7 +52,7 @@ void logger::log(const std::string& formattedText, const std::string& color){
         logFile =  std::string(dt) + ".log";
 
     if(access("/var/log", 06) != W_OK)
-        path = "log/serviceState";
+        path = "log/"+pName;
 
     if(!std::filesystem::is_directory(path))
         std::filesystem::create_directories(path);
@@ -59,7 +65,7 @@ void logger::log(const std::string& formattedText, const std::string& color){
     }else{
         f.seekg (0, std::ios::end);
         long size = f.tellg();
-        if(size >= 52428800){  //50Mbytes
+        if(size >= 1048576*maxSize){
             f.close();
             log(formattedText, color);
             return;
