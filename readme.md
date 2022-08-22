@@ -1,7 +1,15 @@
 #TinyLogger
 Библиотека регистратор логов для с++  
 
-Использование простое:
+Сборка:
+```shell
+mkdir build
+cd build
+cmake ..
+sudo make install
+```
+
+Использование:
 ```c++
 #include "logger.h"
 
@@ -13,6 +21,6 @@ logger::error("text message");
 logger::success("text message");
 ...
 ```
-Допускается использование std::string или char *
+Допускается применение std::string или char *
 
 Логи сохраняюстя в ```/var/log/program``` если у запускающего пользователя нет прав, то рядом с программой в папке ```log/program```
