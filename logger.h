@@ -22,7 +22,7 @@ private:
 public:
     static std::fstream f;
 
-    static void init(std::string &name, int maxLogSize = 50, int maxFilesCount = 10);
+    static void init(const std::string &name, int maxLogSize = 50, int maxFilesCount = 10);
 
     static void log(const std::string& text, const std::string& color);
 

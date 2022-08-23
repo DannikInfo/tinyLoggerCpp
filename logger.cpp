@@ -7,7 +7,7 @@ std::string logger::logFile;
 std::fstream logger::f;
 std::string logger::path = "/var/log/"+pName;
 
-void logger::init(std::string &name, int maxLogSize, int maxFilesCount){
+void logger::init(const std::string &name, int maxLogSize, int maxFilesCount){
     pName = name;
     maxSize = maxLogSize;
     maxFiles = maxFilesCount;
