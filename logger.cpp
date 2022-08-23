@@ -1,5 +1,8 @@
 #include "logger.h"
 
+std::string logger::pName;
+int logger::maxSize;
+int logger::maxFiles;
 std::string logger::logFile;
 std::fstream logger::f;
 std::string logger::path = "/var/log/"+pName;
