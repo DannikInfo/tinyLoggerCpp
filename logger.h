@@ -5,13 +5,20 @@
 #include <fstream>
 #include <dirent.h>
 #include <chrono>
+#include <sys/time.h>
 #include <ctime>
 #include <cstring>
 #include <filesystem>
 #include <cstdarg>
 #include <unistd.h>
+#include <thread>
+#include <queue>
+#include <cmath>
+#include <map>
 
-class logger {
+
+class logger{
+
 private:
     static std::string logFile;
     static std::string path;
@@ -19,10 +26,13 @@ private:
     static std::string pName;
     static int maxSize;
     static int maxFiles;
-public:
     static std::fstream f;
 
+    static void logLoop();
+public:
     static void init(const std::string &name, int maxLogSize = 50, int maxFilesCount = 10);
+
+    static void setThread(const std::string &name, std::thread::id threadID);
 
     static void log(const std::string& text, const std::string& color);
 
@@ -36,6 +46,7 @@ public:
     static void error(const char* text);
     static void info(const char* text);
     static void success(const char* text);
+
 };
 
 #endif //TINYLOGGER_LOGGER_H

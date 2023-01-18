@@ -20,6 +20,10 @@ logger::warn("text message");
 logger::error("text message");
 logger::success("text message");
 ...
+
+std::thread::id mainThreadID = std::this_thread::get_id();
+logger::setThread("MainThread", mainThreadID); //Именование потока, иначе будет undefinedThread
+
 ```
 Допускается применение std::string или char *
 
