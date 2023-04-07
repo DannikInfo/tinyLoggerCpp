@@ -15,6 +15,7 @@
 #include <queue>
 #include <cmath>
 #include <map>
+#include <mutex>
 
 
 class logger{
@@ -28,13 +29,14 @@ private:
     static int maxFiles;
     static std::fstream f;
 
+    static std::mutex mutex;
     static void logLoop();
 public:
     static void init(const std::string &name, int maxLogSize = 50, int maxFilesCount = 10);
 
     static void setThread(const std::string &name, std::thread::id threadID);
 
-    static void log(const std::string& text, const std::string& color);
+    static void log(const std::string& text, const std::string& color, int &depth);
 
     static void warn(const std::string& text);
     static void error(const std::string& text);

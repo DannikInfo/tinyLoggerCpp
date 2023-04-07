@@ -3,49 +3,62 @@
 std::string logger::pName;
 int logger::maxSize;
 int logger::maxFiles;
+std::mutex logger::mutex;
 std::string logger::logFile;
 std::string logger::path;
 std::fstream logger::f;
 std::string curThread;
 
-time_t curr_time;
-tm * curr_tm;
-char dt[50];
+//LogFile times
+time_t curr_timeLF;
+tm * curr_tmLF;
+char dtLF[50];
+
+//Log string times
+time_t curr_timeLStr;
+tm * curr_tmLStr;
+char dtLStr[50];
+
 struct timeval tv;
 long milis;
+
+int minDepth = 0;
 
 std::queue<std::string> logs;
 std::map<std::thread::id, std::string> threads;
 
 void logger::logLoop(){
+    std::string log;
     while(true){
-        while(!logs.empty()){
-            time(&curr_time);
-            curr_tm = localtime(&curr_time);
-            bzero(dt, 50);
-            strftime(dt, 50, "%d-%m-%Y %H_%M_%S", curr_tm);
+        time(&curr_timeLF);
+        curr_tmLF = localtime(&curr_timeLF);
+        bzero(dtLF, 50);
+        strftime(dtLF, 50, "%d-%m-%Y %H_%M_%S", curr_tmLF);
 
-            if(logFile.empty())
-                logFile =  path + "/" +std::string(dt) + ".log";
+        if(logFile.empty())
+            logFile =  path + "/" +std::string(dtLF) + ".log";
 
-            if(!f.is_open()) {
-                f.open(logFile.c_str(), std::ios::app);
-                clearLogs();
-            }else {
-                if(std::filesystem::exists(logFile)) {
-                    uintmax_t size = std::filesystem::file_size(logFile);
-                    if (size >= 1048576 * maxSize) {
-                        f.close();
-                        continue;
-                    }
+        if(!f.is_open()) {
+            clearLogs();
+            f.open(logFile.c_str(), std::ios::app);
+        }else {
+            if(std::filesystem::exists(logFile)) {
+                uintmax_t size = std::filesystem::file_size(logFile);
+                if (size >= 1048576 * maxSize) {
+                    f.close();
+                    logFile.clear();
+                    continue;
                 }
             }
-            std::string log = logs.front();
+        }
 
+        while(!logs.empty()){
+            mutex.lock();
+            log = logs.front();
             f << log << std::endl;
             std::cout << log << std::endl;
-
             logs.pop();
+            mutex.unlock();
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
@@ -98,45 +111,55 @@ void logger::clearLogs(){
     }
 }
 
-void logger::log(const std::string& formattedText, const std::string& color){
-    time(&curr_time);
-    curr_tm = localtime(&curr_time);
+void logger::log(const std::string& formattedText, const std::string& color, int &depth) {
+    depth++;
+    time(&curr_timeLStr);
+    curr_tmLStr = localtime(&curr_timeLStr);
     gettimeofday(&tv, NULL);
-    milis = lrint(tv.tv_usec/1000.0);
-    if (milis>=1000) {
-        milis -=1000;
+    milis = lrint(tv.tv_usec / 1000.0);
+    if (milis >= 1000) {
+        milis -= 1000;
         tv.tv_sec++;
     }
 
     curThread = "undefinedThread";
-    if(threads.contains(std::this_thread::get_id()))
+    if (threads.contains(std::this_thread::get_id()))
         curThread = threads[std::this_thread::get_id()];
 
-    strftime(dt, 50, "%d-%m-%Y %H:%M:%S.", curr_tm);
-    std::string log="["+std::string(dt)+std::to_string(milis) + " | " + curThread +formattedText;
-    logs.push(color + log + "\033[0m");
+    strftime(dtLStr, 50, "%d-%m-%Y %H:%M:%S.", curr_tmLStr);
+    std::string logStr = "[" + std::string(dtLStr) + std::to_string(milis) + " | " + curThread + formattedText;
+
+    try {
+        mutex.lock();
+        logs.push(color + logStr + "\033[0m");
+        mutex.unlock();
+    }catch(std::exception &e){
+        std::cout << "\033[0;31m" << "[" << std::string(dtLF) << std::to_string(milis) << " | " + curThread << " | ERROR] " << e.what() << std::endl;
+        if(depth < 5)
+            log(formattedText, color, depth);
+    }
+    depth--;
 }
 
 //strings
 void logger::warn(const std::string& text){
-
     std::string format = " | WARN] ";
-    log(format + text, "\033[0;33m");
+    log(format + text, "\033[0;33m", minDepth);
 }
 
 void logger::error(const std::string& text){
     std::string format = " | ERROR] ";
-    log(format + text, "\033[0;31m");
+    log(format + text, "\033[0;31m", minDepth);
 }
 
 void logger::info(const std::string& text){
     std::string format = " | INFO] ";
-    log(format + text, "\033[0;34m");
+    log(format + text, "\033[0;34m", minDepth);
 }
 
 void logger::success(const std::string& text){
     std::string format = " | SUCCESS] ";
-    log(format + text, "\033[0;32m");
+    log(format + text, "\033[0;32m", minDepth);
 }
 
 
