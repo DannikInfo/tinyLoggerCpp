@@ -22,7 +22,7 @@ char dtLStr[50];
 struct timeval tv;
 long milis;
 
-int minDepth = 0;
+int logger::minDepth = 0;
 
 std::queue<std::string> logs;
 std::map<std::thread::id, std::string> threads;
@@ -68,6 +68,7 @@ void logger::init(const std::string &name, int maxLogSize, int maxFilesCount){
     pName = name;
     maxSize = maxLogSize;
     maxFiles = maxFilesCount;
+    minDepth = 0;
 
     if(access("/var/log", 06) != W_OK)
         path = "log/"+pName;
@@ -111,7 +112,7 @@ void logger::clearLogs(){
     }
 }
 
-void logger::log(const std::string& formattedText, const std::string& color, int &depth) {
+void logger::log(const std::string& formatedText, const std::string& color, int &depth) {
     depth++;
     time(&curr_timeLStr);
     curr_tmLStr = localtime(&curr_timeLStr);
@@ -127,7 +128,7 @@ void logger::log(const std::string& formattedText, const std::string& color, int
         curThread = threads[std::this_thread::get_id()];
 
     strftime(dtLStr, 50, "%d-%m-%Y %H:%M:%S.", curr_tmLStr);
-    std::string logStr = "[" + std::string(dtLStr) + std::to_string(milis) + " | " + curThread + formattedText;
+    std::string logStr = "[" + std::string(dtLStr) + std::to_string(milis) + " | " + curThread + formatedText;
 
     try {
         mutex.lock();
@@ -136,10 +137,11 @@ void logger::log(const std::string& formattedText, const std::string& color, int
     }catch(std::exception &e){
         std::cout << "\033[0;31m" << "[" << std::string(dtLF) << std::to_string(milis) << " | " + curThread << " | ERROR] " << e.what() << std::endl;
         if(depth < 5)
-            log(formattedText, color, depth);
+            log(formatedText, color, depth);
     }
     depth--;
 }
+
 
 //strings
 void logger::warn(const std::string& text){
@@ -162,7 +164,6 @@ void logger::success(const std::string& text){
     log(format + text, "\033[0;32m", minDepth);
 }
 
-
 //chars
 void logger::warn(const char *text) {
     warn(std::string(text));
@@ -179,6 +180,7 @@ void logger::info(const char *text) {
 void logger::success(const char *text) {
     success(std::string(text));
 }
+
 
 void logger::setThread(const std::string &name, std::thread::id threadID) {
     threads.insert(std::make_pair(threadID, name));
