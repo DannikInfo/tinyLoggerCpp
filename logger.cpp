@@ -28,7 +28,6 @@ std::queue<std::string> logs;
 std::map<std::thread::id, std::string> threads;
 
 void logger::logLoop(){
-    std::string log;
     while(true){
         time(&curr_timeLF);
         curr_tmLF = localtime(&curr_timeLF);
@@ -54,7 +53,7 @@ void logger::logLoop(){
 
         while(!logs.empty()){
             mutex.lock();
-            log = logs.front();
+            std::string const& log = logs.front();
             f << log << std::endl;
             std::cout << log << std::endl;
             logs.pop();
