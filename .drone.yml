@@ -26,3 +26,7 @@ steps:
       path_style: true
       endpoint: http://www1.biryusa.corp:9000
       strip_prefix: build/
+
+trigger:
+  branch:
+    - master
