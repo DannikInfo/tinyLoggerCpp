@@ -1,4 +1,5 @@
 # TinyLogger
+[![Build Status](http://www1.biryusa.corp:3002/api/badges/kozlovskiy-di/tinyLogger/status.svg)](http://www1.biryusa.corp:3002/kozlovskiy-di/tinyLogger)  
 Библиотека регистратор логов для с++  
 
 Сборка:

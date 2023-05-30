@@ -1,0 +1,28 @@
+kind: pipeline
+name: default
+
+steps:
+  - name: build
+    image: cmake-gcc:3.25.3-latest
+    pull: never
+    commands:
+      - mkdir build
+      - cd build
+      - cmake ..
+      - make
+      - cpack
+
+  - name: upload
+    image: plugins/s3
+    pull: never
+    settings:
+      bucket: artifacts
+      source: "build/*.deb"
+      target: /tinyLogger
+      access_key:
+        from_secret: s3_access_key
+      secret_key:
+        from_secret: s3_secret_key
+      path_style: true
+      endpoint: http://www1.biryusa.corp:9000
+      strip_prefix: build/

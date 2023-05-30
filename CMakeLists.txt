@@ -15,3 +15,15 @@ install(TARGETS tinyLogger
 
 
 target_link_libraries(${PROJECT_NAME} ${CMAKE_THREAD_LIBS_INIT})
+
+# Install target executable and .so files
+install(FILES build/libtinyLogger.so DESTINATION /usr/local/lib)
+install(FILES logger.h DESTINATION /usr/local/include)
+
+
+set(CPACK_GENERATOR "DEB")
+set(CPACK_PACKAGE_NAME "tinyLogger")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_DESCRIPTION "A simple logger library")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Dannikinfo")
+include(CPack)
