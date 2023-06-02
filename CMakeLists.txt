@@ -5,7 +5,7 @@ find_package(Threads REQUIRED)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_library(tinyLogger SHARED logger.cpp logger.h)
+add_library(tinyLogger SHARED STATIC logger.cpp logger.h)
 
 set_target_properties(tinyLogger PROPERTIES PUBLIC_HEADER logger.h)
 
