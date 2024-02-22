@@ -16,6 +16,8 @@
 #include <cmath>
 #include <map>
 #include <mutex>
+#include <sys/stat.h>
+#include <algorithm>
 
 
 class logger{

@@ -81,6 +81,13 @@ void logger::init(const std::string &name, int maxLogSize, int maxFilesCount){
     logT.detach();
 }
 
+bool compareFilesByModificationTime(const std::string& path1, const std::string& path2) {
+    struct stat attrib1, attrib2;
+    stat(path1.c_str(), &attrib1);
+    stat(path2.c_str(), &attrib2);
+    return difftime(attrib1.st_mtime, attrib2.st_mtime) < 0;
+}
+
 void logger::clearLogs(){
     DIR *dir;
     int logsCount = 0;
@@ -97,12 +104,20 @@ void logger::clearLogs(){
     }
 
     if ((dir = opendir(path.c_str())) != nullptr) {
+        std::vector<std::string> filenames;
         while ((ent = readdir(dir)) != nullptr) {
-            if(!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) continue;
-            if(strstr(ent->d_name, ".log") && logsCount > maxFiles){
+            if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) continue;
+            std::string filename = path + "/" + ent->d_name;
+            filenames.push_back(filename);
+        }
+
+        std::sort(filenames.begin(), filenames.end(), compareFilesByModificationTime);
+
+        for (const auto& filename : filenames) {
+            if(strstr(filename.c_str(), ".log") && logsCount > maxFiles){
                 std::string remFile = path;
                 remFile += "/";
-                remFile += ent->d_name;
+                remFile += filename;
                 remove(remFile.c_str());
                 logsCount--;
             }
