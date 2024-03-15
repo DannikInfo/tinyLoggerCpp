@@ -115,10 +115,7 @@ void logger::clearLogs(){
 
         for (const auto& filename : filenames) {
             if(strstr(filename.c_str(), ".log") && logsCount > maxFiles){
-                std::string remFile = path;
-                remFile += "/";
-                remFile += filename;
-                remove(remFile.c_str());
+                remove(filename.c_str());
                 logsCount--;
             }
         }
